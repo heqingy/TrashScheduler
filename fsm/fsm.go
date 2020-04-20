@@ -114,7 +114,7 @@ func (m *FSM) Transit(e *Event) error {
 		case Time:
 			if ((t.Weekday() == time.Monday) ||
 				(t.Weekday() == time.Sunday)) &&
-				(t.Hour() > 11 && t.Hour() <= 23) &&
+				(t.Hour() > 17 && t.Hour() <= 23) &&
 				// never completed or last completed mission is not on the same day
 				(m.LastTask == nil ||
 					!(m.LastTask.Year() == t.Year() &&
