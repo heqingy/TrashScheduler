@@ -155,15 +155,14 @@ func (s *Service) Run() {
 		}
 		if curState != s.m.StateName {
 			log.Infof("State change: %v -> %v, Trigger: %#v", curState, s.m.State.StateName, e)
-			data, err := s.m.Dump()
-			if err != nil {
-				log.Errorf("failed to dump state: %v", err)
-			} else if err := ioutil.WriteFile(s.config.StatePath, data, 0600); err != nil {
-				log.Errorf("failed to save state: %v", err)
-			} else {
-				log.Infof("State saved.")
-			}
 		}
-
+		data, err := s.m.Dump()
+		if err != nil {
+			log.Errorf("failed to dump state: %v", err)
+		} else if err := ioutil.WriteFile(s.config.StatePath, data, 0600); err != nil {
+			log.Errorf("failed to save state: %v", err)
+		} else {
+			log.Infof("State saved.")
+		}
 	}
 }
