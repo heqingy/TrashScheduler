@@ -56,6 +56,11 @@ func (s *Service) HandleIncomeSMS(phone string, message string) error {
 	}
 	switch s.m.StateName {
 	case fsm.Active:
+		const acceptReply = "me"
+		if message != acceptReply {
+			s.sms.Send(phone, fmt.Sprintf(`you must reply "%v" (no quote) to accept`, acceptReply))
+			return nil
+		}
 		s.events <- &fsm.Event{
 			Type: fsm.Take,
 			EventContext: fsm.EventContext{
@@ -74,6 +79,26 @@ func (s *Service) HandleIncomeSMS(phone string, message string) error {
 		if v < 1 || v > 3 {
 			s.sms.Send(phone, fmt.Sprintf("invalid count %v: count must be 1, 2 or 3", message))
 			return nil
+		}
+		if *s.m.Taker != user.Name {
+			s.sms.Send(
+				phone,
+				fmt.Sprintf("It was %v who has claimed the task, not you, %v.",
+					user.Name,
+					*s.m.Taker,
+				),
+			)
+			return nil
+		}
+		duration := s.m.LastNotify.Add(time.Minute)
+		if duration.After(time.Now()) {
+			s.sms.Send(
+				phone,
+				fmt.Sprintf(
+					"You are not the Flash, please reply only after completing the mission! cooldown: %v",
+					duration,
+				),
+			)
 		}
 		s.events <- &fsm.Event{
 			Type: fsm.Complete,

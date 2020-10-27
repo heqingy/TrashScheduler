@@ -41,11 +41,12 @@ type User struct {
 
 // State is the state
 type State struct {
-	Users      map[string]*User
-	Taker      *string
-	StateName  StateType
-	LastTask   *time.Time
-	LastNotify *time.Time
+	Users       map[string]*User
+	Taker       *string
+	StateName   StateType
+	LastTask    *time.Time
+	LastNotify  *time.Time
+	LastTransit *time.Time
 }
 
 // EventContext is the context for the event
@@ -90,6 +91,7 @@ type FSM struct {
 func (m *FSM) transitToNew(s StateType) {
 	m.StateName = s
 	m.LastNotify = nil
+	m.LastTransit = &[]time.Time{time.Now()}[0]
 }
 
 func (m *FSM) Load(data []byte) error {
