@@ -12,7 +12,7 @@ func (m *FSM) CallForWarrior() error {
 	}
 	userList := UserMapToList(m.Users)
 	message := "Hi trash agents, it's time to escort trash cans. " +
-		`Reply "me" to take this mission.\nLeaderboard:\n` +
+		`Reply "me" to take this mission.` + "\nLeaderboard:\n" +
 		stats(userList)
 	return m.NotifyUsers(userList, message)
 }
