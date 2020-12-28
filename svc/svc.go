@@ -80,6 +80,10 @@ func (s *Service) HandleIncomeSMS(phone string, message string) error {
 			s.sms.Send(phone, fmt.Sprintf("invalid count %v: count must be 1, 2 or 3", message))
 			return nil
 		}
+		if s.m.LastPulled != nil && v != *s.m.LastPulled {
+			s.sms.Send(phone, fmt.Sprintf("invalid count %v: last pulled: %v, you can't pull more.", v, *s.m.LastPulled))
+			return nil
+		}
 		if *s.m.Taker != user.Name {
 			s.sms.Send(
 				phone,

@@ -44,6 +44,7 @@ type State struct {
 	Users       map[string]*User
 	Taker       *string
 	StateName   StateType
+	LastPulled  *int
 	LastTask    *time.Time
 	LastNotify  *time.Time
 	LastTransit *time.Time
@@ -150,6 +151,11 @@ func (m *FSM) Transit(e *Event) error {
 			err = m.RemindMission()
 		case Complete:
 			m.Users[e.Taker].CanPulled += e.PulledCount
+			if m.State.LastPulled != nil {
+				m.State.LastPulled = nil
+			} else {
+				m.State.LastPulled = &e.PulledCount
+			}
 			m.transitToNew(Done)
 		}
 	case Done:
